@@ -5,12 +5,15 @@ import { getToken } from '../utils/common';
 function GetAll() {
     const getTodos = async () => {
         try {
-            const token = getToken();
-            const auth = {
-                headers: { Authorization: token }
-            };
+            const token = await getToken();
+            let res = await axios.get("http://127.0.0.1:5000/getall", {
+                'headers': {
+                    'Authorization': token,
+                },
+                params: {
 
-            let res = await axios.get("http://127.0.0.1:5000/getall", auth)
+                },
+            })
 
             console.log(res.data);  // Assuming you want to log the response data
         } catch (error) {
