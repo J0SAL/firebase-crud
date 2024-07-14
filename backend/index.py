@@ -5,9 +5,12 @@ from flask_cors import CORS, cross_origin
 import flask
 from uuid import uuid4
 
+from decorators import verify_token
+
 load_dotenv()
 app = Flask(__name__)
-CORS(app)
+# CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 cred = credentials.Certificate('key.json')
 default_app = initialize_app(cred)
@@ -19,19 +22,6 @@ todo_ref = db.collection('todos')
 ## helpers
 def geterate_unique_id():
     return uuid4().hex
-
-@app.before_request
-def verify_app_check() -> None:
-    print(request.headers)
-    app_check_token = request.headers.get("Authorization")
-    print(app_check_token)
-    try:
-        # app_check_claims = app_check.verify_token(app_check_token)
-        app_check_claims = auth.verify_id_token(app_check_token)
-        # If verify_token() succeeds, okay to continue to route handler.
-    except Exception as e:
-        print(str(e), '--')
-        flask.abort(401)
 
 ## Routes
 @app.route('/',methods=['GET'])
@@ -68,14 +58,15 @@ def read():
     except Exception as e:
         return f"An Error Occured: {e}", 500
 
-@app.route('/getall', methods=['GET'])
-def readall():
+@app.route('/getall', methods=['GET','POST'])
+@verify_token
+def readall(claims):
     try:
         # Check if ID was passed to URL query 
         all_todos = [doc.to_dict() for doc in todo_ref.stream()]
         return jsonify(all_todos), 200
     except Exception as e:
-        return f"An Error Occured: {e}", 500
+        return {"error": f"An Error Occured: {e}"}, 500
 
 
 @app.route('/update', methods=['POST', 'PUT'])

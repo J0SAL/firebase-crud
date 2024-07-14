@@ -6,13 +6,11 @@ function GetAll() {
     const getTodos = async () => {
         try {
             const token = await getToken();
-            let res = await axios.get("http://127.0.0.1:5000/getall", {
+            console.log("token", token)
+            let res = await axios.post("http://127.0.0.1:5000/getall", {}, {
                 'headers': {
-                    'Authorization': token,
-                },
-                params: {
-
-                },
+                    'X-Firebase-AppCheck': `${token}`
+                }
             })
 
             console.log(res.data);  // Assuming you want to log the response data
