@@ -33,7 +33,8 @@ function Login() {
                 "X-Firebase-AppCheck": `${token}`,
             },
         });
-        console.log(res);
+        const jwttoken = res.data.token;
+        console.log(jwttoken);
     }
 
 
