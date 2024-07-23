@@ -6,7 +6,7 @@ import {
     signOut,
     onAuthStateChanged,
 } from "firebase/auth";
-import { setToken } from "../utils/common";
+import axios from "axios";
 
 var template = {
     email: "",
@@ -17,7 +17,7 @@ function Login() {
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            console.log("user: ", user);
+            console.log("loggin in");
         } else {
             console.log("logged out");
         }
@@ -26,6 +26,16 @@ function Login() {
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
+
+    const login = async (token) => {
+        let res = await axios.post("http://127.0.0.1:5000/register", {}, {
+            headers: {
+                "X-Firebase-AppCheck": `${token}`,
+            },
+        });
+        console.log(res);
+    }
+
 
     const signIn = async (e) => {
         e.preventDefault();
@@ -36,10 +46,11 @@ function Login() {
                 user.email,
                 user.password
             );
-
-            console.log(result.user.displayName);
-            console.log(result.user.email);
-            console.log(result.user.uid);
+            const email = result.user.email;
+            const idToken = await result.user.getIdToken();
+            console.log(email);
+            console.log(idToken);
+            login(idToken);
         } catch (error) {
             console.log(error);
         }
@@ -48,10 +59,11 @@ function Login() {
     const signInGoogle = async () => {
         try {
             let result = await signInWithPopup(auth, provider);
-            setToken(await result.user.getIdToken());
-            console.log(result.user.displayName);
-            console.log(result.user.email);
-            console.log(result.user.uid);
+            const email = result.user.email;
+            const idToken = await result.user.getIdToken();
+            console.log(email);
+            console.log(idToken);
+            login(idToken);
         } catch (error) {
             console.log(error);
         }

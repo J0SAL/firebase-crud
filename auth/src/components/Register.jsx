@@ -4,12 +4,11 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
   signOut,
-  updateProfile,
   onAuthStateChanged,
 } from "firebase/auth";
+import axios from "axios";
 
 var template = {
-  name: "",
   email: "",
   password: "",
 };
@@ -18,7 +17,7 @@ function Register() {
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("user: ", user);
+      console.log("loggen in");
     } else {
       console.log("logged out");
     }
@@ -27,6 +26,15 @@ function Register() {
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
+
+  const register = async (token) => {
+    let res = await axios.post("http://127.0.0.1:5000/register", {}, {
+      headers: {
+        "X-Firebase-AppCheck": `${token}`,
+      },
+    });
+    console.log(res);
+  }
 
   const signIn = async (e) => {
     e.preventDefault();
@@ -37,14 +45,11 @@ function Register() {
         user.email,
         user.password
       );
-      await updateProfile(result.user, {
-        displayName: user.name,
-      });
-      result.user.displayName = user.name;
-
-      console.log(result.user.displayName);
-      console.log(result.user.email);
-      console.log(result.user.uid);
+      const email = result.user.email;
+      const idToken = await result.user.getIdToken();
+      console.log(email);
+      console.log(idToken);
+      register(idToken);
     } catch (error) {
       console.log(error);
     }
@@ -53,9 +58,11 @@ function Register() {
   const signInGoogle = async () => {
     try {
       let result = await signInWithPopup(auth, provider);
-      console.log(result.user.displayName);
-      console.log(result.user.email);
-      console.log(result.user.uid);
+      const email = result.user.email;
+      const idToken = await result.user.getIdToken();
+      console.log(email);
+      console.log(idToken);
+      register(idToken);
     } catch (error) {
       console.log(error);
     }
@@ -81,13 +88,6 @@ function Register() {
             width: "25vw",
           }}
         >
-          Name{" "}
-          <input
-            type="name"
-            name="name"
-            value={user.name}
-            onChange={handleChange}
-          />
           Email{" "}
           <input
             type="email"

@@ -3,13 +3,12 @@ import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDHZ4VdrdjNNg2i79i2YdC6k8c5Nuqxfpo",
-  authDomain: "odoo-8561e.firebaseapp.com",
-  projectId: "odoo-8561e",
-  storageBucket: "odoo-8561e.appspot.com",
-  messagingSenderId: "557258926896",
-  appId: "1:557258926896:web:53734436e79a8c28c2f6f5",
-  measurementId: "G-NPGZH25LVG",
+  apiKey: "AIzaSyCD83tlMn73r9da0SY7bwo0Vl-ghHW22xw",
+  authDomain: "oauth-curd.firebaseapp.com",
+  projectId: "oauth-curd",
+  storageBucket: "oauth-curd.appspot.com",
+  messagingSenderId: "310034893071",
+  appId: "1:310034893071:web:873550a15264880e78167a",
 };
 
 // Initialize Firebase

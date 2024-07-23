@@ -1,7 +1,7 @@
-export const setToken = async (token) => {
-  await localStorage.setItem("authToken", token);
+export const setFirebaseToken = async (token) => {
+  await localStorage.setItem("firebaseauthToken", token);
 };
-export const getToken = async () => {
-  let token = await localStorage.getItem("authToken");
+export const getFirebaseToken = async () => {
+  let token = await localStorage.getItem("firebaseauthToken");
   return token;
 };
