@@ -59,7 +59,7 @@ def read():
         return f"An Error Occured: {e}", 500
 
 @app.route('/getall', methods=['GET','POST'])
-@verify_token
+@verify_oauth_token
 def readall(claims):
     try:
         # Check if ID was passed to URL query 
