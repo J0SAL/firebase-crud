@@ -28,20 +28,38 @@ export const AuthProvider = ({ children }) => {
         }
     });
 
-    const getUser = async (token) => {
+    useEffect(() => {
+        if (jwtToken)
+            getUser();
+    }, [jwtToken])
 
-        let res = await axios.post("http://127.0.0.1:5000/get-user", {}, {
+    const getUser = async () => {
+        console.log("get user jwt token: ", jwtToken)
+        let res = await axios.get("http://127.0.0.1:5000/get-user", {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${jwtToken}`
             }
         });
         setUser(res?.data?.user)
         toast.success(`Welcome!🎉`)
     }
 
-    const setUserData = async (token) => {
+    const addUser = async (user) => {
+        try {
 
+            let res = await axios.post("http://127.0.0.1:5000/add-user-info", { "user": user }, {
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                }
+            });
+            setUser(res?.data?.user)
+            toast.success(`User Added!🎉`)
+        } catch (error) {
+            toast.error(`Something went wrong ☹️`)
+            console.log(error)
+        }
     }
+
     const login = async (token) => {
         try {
             let res = await axios.post("http://127.0.0.1:5000/login", {}, {
@@ -49,10 +67,7 @@ export const AuthProvider = ({ children }) => {
                     "X-Firebase-AppCheck": `${token}`,
                 },
             });
-            await setJwtToken(res.data.token);
-            console.log("JWT set");
-            console.log(res.data.token);
-            await getUser(res.data.token);
+            setJwtToken(res.data.token)
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -69,12 +84,8 @@ export const AuthProvider = ({ children }) => {
                     "X-Firebase-AppCheck": `${token}`,
                 },
             });
-            await setJwtToken(res.data.token);
-            console.log("JWT set");
-            console.log(res.data.token);
-            await setUserData(res.data.token);
-            toast.warn(`A little more info before we begin.. 😊`);
-            navigate('/user-info');
+            setJwtToken(res.data.token);
+            navigate('/user-info')
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -97,7 +108,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ jwtToken, user, login, register, logout }}>
+        <AuthContext.Provider value={{ user, login, register, addUser, logout }}>
             {children}
         </AuthContext.Provider>
     );

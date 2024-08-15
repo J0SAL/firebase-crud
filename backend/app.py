@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 
 from firebase_admin import credentials, firestore, initialize_app, app_check, auth
@@ -13,11 +13,17 @@ cred = credentials.Certificate('key.json')
 default_app = initialize_app(cred)
 db = firestore.client()
 
+# start
+mydb = {}
+# end 
+
+
 @app.route('/register', methods=['POST'])
 @verify_oauth_token
 def register(user):
     try:
         email = user['email']
+        mydb[email] = {}
         token = generate_jwt_token(email,24)
         return {"token": token},200
     except Exception as e:
@@ -40,18 +46,17 @@ def login(user):
 @verify_jwt_token
 def get_data(user):
     try:
-        print(user)
-        return {"user": user['email']}
+        return {"user": mydb[user['email']]}
     except Exception as e:
         print(f"error {str(e)}")
         return {"error": str(e)}, 500
 
-@app.route('/set-data', methods=['POST'])
+@app.route('/add-user-info', methods=['POST'])
 @verify_jwt_token
-def set_data(user):
+def add_user(user):
     try:
-        print(user)
-        return {"user": user['email']}
+        mydb[user['email']] = request.json['user']
+        return {"user": "user set"}
     except Exception as e:
         print(f"error {str(e)}")
         return {"error": str(e)}, 500
