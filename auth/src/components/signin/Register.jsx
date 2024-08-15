@@ -4,7 +4,16 @@ import {
   signInWithPopup,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import axios from "axios";
+
+import { Button, Col, Form, InputGroup, Row } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faEnvelope,
+  faUnlockAlt,
+  faSpinner,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
+
 import { useAuth } from "../../context/AuthContext";
 
 var default_user = {
@@ -13,6 +22,13 @@ var default_user = {
 };
 function Register() {
   const [user, setUser] = useState(default_user);
+  const [loading, setLoading] = useState(false);
+
+  const canSubmit =
+    user.email.length > 0 &&
+    user.password.length > 0 &&
+    !loading;
+
 
   const { register, logout } = useAuth();
 
@@ -54,39 +70,64 @@ function Register() {
 
   return (
     <div>
-      <h2>Register</h2>
-      <form onSubmit={signIn}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            minWidth: "25vw",
-            width: "25vw",
-          }}
-        >
-          Email{" "}
-          <input
-            type="email"
-            name="email"
-            value={user.email}
-            onChange={handleChange}
-          />
-          Password{" "}
-          <input
-            type="password"
-            name="password"
-            value={user.password}
-            onChange={handleChange}
-          />
-          <button type="submit">Submit</button>
-          <button type="button" onClick={signInGoogle}>
-            Google
-          </button>
-          <button type="button" onClick={logout}>
-            Logout
-          </button>
-        </div>
-      </form>
+      <Form className="mt-4" onSubmit={signIn}>
+        <Form.Group id="email" className="mb-4">
+          <Form.Label>Your Email</Form.Label>
+          <InputGroup>
+            <InputGroup.Text className="px-2">
+              <FontAwesomeIcon icon={faEnvelope} style={{ width: "15px" }} />
+            </InputGroup.Text>
+            <Form.Control
+              autoFocus
+              required
+              name="email"
+              type="email"
+              placeholder="example@company.com"
+              onChange={handleChange}
+            />
+          </InputGroup>
+        </Form.Group>
+
+        <Form.Group id="password" className="mb-4">
+          <Form.Label>Password</Form.Label>
+
+          <InputGroup>
+            <InputGroup.Text className="px-2">
+              <FontAwesomeIcon icon={faUnlockAlt} style={{ width: "15px" }} />
+            </InputGroup.Text>
+            <Form.Control
+              required
+              name="password"
+              type="password"
+              placeholder="Password"
+              onChange={handleChange}
+            />
+          </InputGroup>
+        </Form.Group>
+        <Row>
+          <Col xs={12}>
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-100"
+              disabled={!canSubmit}
+            >
+              Register
+            </Button>
+          </Col>
+          <Col xs={12} className="mt-2">
+            <button className="login-with-google-btn w-100" onClick={signInGoogle}>
+              Continue With Google
+            </button>
+          </Col>
+          {loading && (
+            <Col xs={1}>
+              <FontAwesomeIcon icon={faSpinner} className="fa-spin" />
+            </Col>
+          )}
+
+        </Row>
+      </Form>
     </div>
   );
 }
