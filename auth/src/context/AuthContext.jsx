@@ -28,26 +28,24 @@ export const AuthProvider = ({ children }) => {
         }
     });
 
-    useEffect(() => {
-        if (jwtToken)
-            getUser();
-    }, [jwtToken])
-
-    const getUser = async () => {
-        console.log("get user jwt token: ", jwtToken)
-        let res = await axios.get("http://127.0.0.1:5000/get-user", {
-            headers: {
-                'Authorization': `Bearer ${jwtToken}`
-            }
-        });
-        setUser(res?.data?.user)
-        toast.success(`Welcome!🎉`)
+    const getUser = async (jwtToken) => {
+        try {
+            let res = await axios.get("http://127.0.0.1:5000/get-user", {
+                headers: {
+                    'Authorization': `Bearer ${jwtToken}`
+                }
+            });
+            setUser(res?.data?.user)
+            toast.success(`Welcome!🎉`)
+        } catch (err) {
+            console.log("Error", err);
+        }
     }
 
     const addUser = async (user) => {
         try {
 
-            let res = await axios.post("http://127.0.0.1:5000/add-user-info", { "user": user }, {
+            let res = await axios.post("http://127.0.0.1:5000/add-user-info", user, {
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
                 }
@@ -67,7 +65,8 @@ export const AuthProvider = ({ children }) => {
                     "X-Firebase-AppCheck": `${token}`,
                 },
             });
-            setJwtToken(res.data.token)
+            await setJwtToken(res.data.token);
+            getUser(res.data.token);
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
