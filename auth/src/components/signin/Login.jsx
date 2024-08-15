@@ -1,46 +1,28 @@
 import React, { useState } from "react";
-import { auth, provider } from "../utils/firebase";
+import { auth, provider } from "../../utils/firebase";
 import {
     signInWithPopup,
     signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged,
 } from "firebase/auth";
-import axios from "axios";
 
-var template = {
+import { useAuth } from "../../context/AuthContext";
+
+var default_user = {
     email: "",
     password: "",
 };
 function Login() {
-    const [user, setUser] = useState(template);
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            console.log("loggin in");
-        } else {
-            console.log("logged out");
-        }
-    });
+    const [user, setUser] = useState(default_user);
 
     const handleChange = (e) => {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    const login = async (token) => {
-        let res = await axios.post("http://127.0.0.1:5000/register", {}, {
-            headers: {
-                "X-Firebase-AppCheck": `${token}`,
-            },
-        });
-        const jwttoken = res.data.token;
-        console.log(jwttoken);
-    }
-
+    const { login, logout } = useAuth();
 
     const signIn = async (e) => {
         e.preventDefault();
-        setUser(template);
+        setUser(default_user);
         try {
             let result = await signInWithEmailAndPassword(
                 auth,
@@ -48,10 +30,10 @@ function Login() {
                 user.password
             );
             const email = result.user.email;
-            const idToken = await result.user.getIdToken();
+            const firebaseIdToken = await result.user.getIdToken();
             console.log(email);
-            console.log(idToken);
-            login(idToken);
+            console.log(firebaseIdToken);
+            login(firebaseIdToken);
         } catch (error) {
             console.log(error);
         }
@@ -70,13 +52,7 @@ function Login() {
         }
     };
 
-    const logout = async () => {
-        try {
-            await signOut(auth);
-        } catch (err) {
-            console.error(err);
-        }
-    };
+
 
     return (
         <div>

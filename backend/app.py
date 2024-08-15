@@ -36,7 +36,7 @@ def login(user):
         print(f"error {str(e)}")
         return {"error": str(e)}, 500
 
-@app.route('/get-data', methods=['GET'])
+@app.route('/get-user', methods=['GET', 'POST'])
 @verify_jwt_token
 def get_data(user):
     try:

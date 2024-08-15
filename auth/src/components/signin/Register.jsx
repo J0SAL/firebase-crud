@@ -1,45 +1,28 @@
 import React, { useState } from "react";
-import { auth, provider } from "../utils/firebase";
+import { auth, provider } from "../../utils/firebase";
 import {
   signInWithPopup,
   createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
 } from "firebase/auth";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
-var template = {
+var default_user = {
   email: "",
   password: "",
 };
 function Register() {
-  const [user, setUser] = useState(template);
+  const [user, setUser] = useState(default_user);
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("loggen in");
-    } else {
-      console.log("logged out");
-    }
-  });
+  const { register, logout } = useAuth();
 
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const register = async (token) => {
-    let res = await axios.post("http://127.0.0.1:5000/register", {}, {
-      headers: {
-        "X-Firebase-AppCheck": `${token}`,
-      },
-    });
-    const jwttoken = res.data.token;
-    console.log(jwttoken);
-  }
-
   const signIn = async (e) => {
     e.preventDefault();
-    setUser(template);
+    setUser(default_user);
     try {
       let result = await createUserWithEmailAndPassword(
         auth,
@@ -47,10 +30,8 @@ function Register() {
         user.password
       );
       const email = result.user.email;
-      const idToken = await result.user.getIdToken();
-      console.log(email);
-      console.log(idToken);
-      register(idToken);
+      const firebaseIdToken = await result.user.getIdToken();
+      register(firebaseIdToken);
     } catch (error) {
       console.log(error);
     }
@@ -60,20 +41,10 @@ function Register() {
     try {
       let result = await signInWithPopup(auth, provider);
       const email = result.user.email;
-      const idToken = await result.user.getIdToken();
-      console.log(email);
-      console.log(idToken);
-      register(idToken);
+      const firebaseIdToken = await result.user.getIdToken();
+      register(firebaseIdToken);
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.error(err);
     }
   };
 
