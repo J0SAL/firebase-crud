@@ -21,8 +21,8 @@ def verify_oauth_token(f):
             
             return f(*args, **kwargs, user=user)
         except Exception as e:
-            print(f"Error: {str(e)}")
-            return {"error": str(e)}, 401
+            print(f"Error oauth: {str(e)}")
+            return {"error oauth": str(e)}, 401
     
     return decorated_function
 
@@ -34,13 +34,15 @@ def verify_jwt_token(f):
             return f(*args, **kwargs)
         try:
             token = request.headers['Authorization'].split(" ")[1]
-            
             data = jwt.decode(token, key, algorithms=["HS256"])
             user = {}
             user['email'] = data['user_email']
 
             return f(*args, **kwargs, user=user)
+        except jwt.ExpiredSignatureError as e:
+            print("jwt expired", str(e))
+            return {"status": "jwt_expired"}, 402
         except Exception as e:
-            print(f"Error: {str(e)}")
-            return {"error":str(e)}, 401
+            print(f"Error jwt: {str(e)}")
+            return {"error jwt":str(e)}, 401
     return decorated_function

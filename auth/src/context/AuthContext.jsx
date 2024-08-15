@@ -5,38 +5,23 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { auth } from "../utils/firebase";
 import { BASE_URL } from "../utils/base_url";
+import axiosClient from "../utils/axios-client";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [jwtToken, setJwtToken] = useState(null);
+    const [jwtToken, setJwtToken] = useState(localStorage.getItem('jwttoken'));
     const navigate = useNavigate();
 
     useEffect(() => {
-        let localtoken = localStorage.getItem("jwttoken")
-        if (localtoken) {
-            setJwtToken(localtoken)
-        }
-    }, []);
-
-    useEffect(() => {
-        if (jwtToken) {
-            localStorage.setItem("jwttoken", jwtToken);
+        if (jwtToken)
             getUser(jwtToken);
-        } else {
-            localStorage.removeItem("jwttoken");
-        }
-
     }, [jwtToken])
 
-    const getUser = async (jwtToken) => {
+    const getUser = async (token) => {
         try {
-            let res = await axios.get(`${BASE_URL}/get-user`, {
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                }
-            });
+            let res = await axios.get(`${BASE_URL}/get-user`, { headers: { "Authorization": `Bearer ${token}` } });
             if (res?.data?.user == "") {
                 navigate("/user-info")
             } else {
@@ -46,6 +31,11 @@ export const AuthProvider = ({ children }) => {
             }
         }
         catch (error) {
+            if (error.response.data.status == 'jwt_expired') {
+                toast.info("Session Expired, Please Log in again 😊")
+                removeData()
+                navigate('/login')
+            }
             console.log(error);
         }
     }
@@ -53,11 +43,7 @@ export const AuthProvider = ({ children }) => {
     const addUser = async (user) => {
         try {
 
-            let res = await axios.post(`${BASE_URL}/add-user-info`, user, {
-                headers: {
-                    'Authorization': `Bearer ${jwtToken}`
-                }
-            });
+            let res = await axiosClient.post("/add-user-info", user);
             setUser(res?.data?.user)
             toast.success(`User Added!🎉`)
         } catch (error) {
@@ -68,12 +54,13 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (token) => {
         try {
-            let res = await axios.post(`${BASE_URL}/login`, {}, {
+            let res = await axiosClient.post(`${BASE_URL}/login`, {}, {
                 headers: {
                     "X-Firebase-AppCheck": `${token}`,
                 },
             });
-            await setJwtToken(res.data.token);
+            setJwtToken(res.data.token);
+            localStorage.setItem("jwttoken", res.data.token);
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -91,6 +78,7 @@ export const AuthProvider = ({ children }) => {
                 },
             });
             setJwtToken(res.data.token);
+            localStorage.setItem("jwttoken", res.data.token);
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -99,11 +87,15 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+
+    const removeData = async () => {
+        await signOut(auth);
+        setUser(null);
+        localStorage.removeItem("jwttoken");
+    }
     const logout = async () => {
         try {
-            await signOut(auth);
-            setJwtToken(null);
-            setUser(null);
+            removeData();
             toast.success('Come back soon!😀 ', {
                 position: "top-right",
             })
