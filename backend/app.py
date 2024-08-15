@@ -38,7 +38,7 @@ def register(user):
 def login(user):
     try:
         email = user['email']
-        token = generate_jwt_token(email,0.0167)
+        token = generate_jwt_token(email,24)
         return {"token": token},200
     except Exception as e:
         print(f"error {str(e)}")

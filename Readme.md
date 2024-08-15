@@ -1,4 +1,4 @@
 ### todos
 
-1. Navbar
-2. add ui for use case
+1. Navbar-update
+2. add ui movie library
