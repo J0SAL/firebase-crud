@@ -33,7 +33,11 @@ function Register() {
       const firebaseIdToken = await result.user.getIdToken();
       register(firebaseIdToken);
     } catch (error) {
-      console.log(error);
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('This email address is already in use. Please use a different email.');
+      } else {
+        console.log('An error occurred:', error.message);
+      }
     }
   };
 

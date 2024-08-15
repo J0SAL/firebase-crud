@@ -1,5 +1,4 @@
 ### todos
 
-1. Read/Write tokens to memory
-2. Navbar
-3. put url in urils
+1. Navbar
+2. axios service

@@ -4,7 +4,6 @@ import "react-toastify/dist/ReactToastify.css";
 import CustomRoutes from "./Routes";
 
 function App() {
-  console.log("api", process.env.REACT_APP_APIKEY);
   return (
     <div>
       <ToastContainer />

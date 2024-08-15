@@ -4,48 +4,56 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { auth } from "../utils/firebase";
+import { BASE_URL } from "../utils/base_url";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState({});
+    const [user, setUser] = useState(null);
     const [jwtToken, setJwtToken] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (user) {
-            console.log("siggned in")
-        } else {
-            console.log("signed out")
+        let localtoken = localStorage.getItem("jwttoken")
+        if (localtoken) {
+            setJwtToken(localtoken)
         }
-    }, [user]);
+    }, []);
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            console.log("firebase loggin in");
+    useEffect(() => {
+        if (jwtToken) {
+            localStorage.setItem("jwttoken", jwtToken);
+            getUser(jwtToken);
         } else {
-            console.log("firebase logged out");
+            localStorage.removeItem("jwttoken");
         }
-    });
+
+    }, [jwtToken])
 
     const getUser = async (jwtToken) => {
         try {
-            let res = await axios.get("http://127.0.0.1:5000/get-user", {
+            let res = await axios.get(`${BASE_URL}/get-user`, {
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
                 }
             });
-            setUser(res?.data?.user)
-            toast.success(`Welcome!🎉`)
-        } catch (err) {
-            console.log("Error", err);
+            if (res?.data?.user == "") {
+                navigate("/user-info")
+            } else {
+                setUser(res?.data?.user)
+                toast.success(`Welcome ${res?.data?.user?.name}!🎉`)
+                navigate("/");
+            }
+        }
+        catch (error) {
+            console.log(error);
         }
     }
 
     const addUser = async (user) => {
         try {
 
-            let res = await axios.post("http://127.0.0.1:5000/add-user-info", user, {
+            let res = await axios.post(`${BASE_URL}/add-user-info`, user, {
                 headers: {
                     'Authorization': `Bearer ${jwtToken}`
                 }
@@ -60,13 +68,12 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (token) => {
         try {
-            let res = await axios.post("http://127.0.0.1:5000/login", {}, {
+            let res = await axios.post(`${BASE_URL}/login`, {}, {
                 headers: {
                     "X-Firebase-AppCheck": `${token}`,
                 },
             });
             await setJwtToken(res.data.token);
-            getUser(res.data.token);
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -78,13 +85,12 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (token) => {
         try {
-            let res = await axios.post("http://127.0.0.1:5000/register", {}, {
+            let res = await axios.post(`${BASE_URL}/register`, {}, {
                 headers: {
                     "X-Firebase-AppCheck": `${token}`,
                 },
             });
             setJwtToken(res.data.token);
-            navigate('/user-info')
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -97,6 +103,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await signOut(auth);
             setJwtToken(null);
+            setUser(null);
             toast.success('Come back soon!😀 ', {
                 position: "top-right",
             })

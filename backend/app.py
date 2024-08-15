@@ -50,9 +50,9 @@ def get_data(user):
     try:
         userdata = users_ref.where('email', '==', user['email']).get()
         if not userdata: 
-            return {'error': 'user not found'}, 401
+            return {'user': ""}, 201
         print(userdata[0].to_dict())
-        return {"user": userdata[0].to_dict()}, 200
+        return {"user": userdata[0].to_dict()}, 201
     except Exception as e:
         print(f"error {str(e)}")
         return {"error": str(e)}, 500
@@ -68,7 +68,7 @@ def add_user(user):
             'name': jsondata['user_name'],
             'locality': jsondata['locality'],
         })
-        return {"user": "user set"}, 200
+        return {"user": newuser[1].get().to_dict()}, 200
     except Exception as e:
         print(f"error {str(e)}")
         return {"error": str(e)}, 500
