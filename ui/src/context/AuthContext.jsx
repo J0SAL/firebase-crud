@@ -20,6 +20,11 @@ export const AuthProvider = ({ children }) => {
             getUser(jwtToken);
         }
     }, [jwtToken])
+    useEffect(() => {
+        if (user) {
+            navigate("/")
+        }
+    }, [user])
 
     const getUser = async (token) => {
         try {
@@ -29,7 +34,6 @@ export const AuthProvider = ({ children }) => {
             } else {
                 setUser(res?.data?.user)
                 toast.success(`Welcome ${res?.data?.user?.name}!🎉`)
-                navigate("/");
             }
         }
         catch (error) {

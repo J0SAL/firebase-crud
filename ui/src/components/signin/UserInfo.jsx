@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useAuth } from '../../context/AuthContext';
-
+import { Col, Container, Row, Form, Button } from "react-bootstrap";
 
 var default_user = {
     user_name: "",
@@ -23,35 +23,41 @@ function UserInfo() {
     }
 
     return (
-        <div>
-            <h2>User Information</h2>
-            <form onSubmit={handleSubmit}>
-                <div
-                    style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        minWidth: "25vw",
-                        width: "25vw",
-                    }}
-                >
-                    Name{" "}
-                    <input
-                        type="text"
-                        name="user_name"
-                        value={user.user_name}
-                        onChange={handleChange}
-                    />
-                    Locality{" "}
-                    <input
-                        type="text"
-                        name="locality"
-                        value={user.locality}
-                        onChange={handleChange}
-                    />
-                    <button type="submit">Submit</button>
-                </div>
-            </form>
-        </div>
+        <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: "92vh" }}>
+            <Row className="w-100">
+                <Col xs={12} className="text-center mb-4">
+                    <h4>User Information</h4>
+                </Col>
+                <Col xs={12} md={4} className="mx-auto">
+                    <Form onSubmit={handleSubmit} className="p-4 bg-white rounded shadow">
+                        <Form.Group className="mb-3">
+                            <Form.Label>Name</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="user_name"
+                                value={user.user_name}
+                                onChange={handleChange}
+                                placeholder="Enter your name"
+                            />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>Locality</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="locality"
+                                value={user.locality}
+                                onChange={handleChange}
+                                placeholder="Enter your locality"
+                            />
+                        </Form.Group>
+                        <Button type="submit" variant="primary" className="w-100">
+                            Submit
+                        </Button>
+                    </Form>
+                </Col>
+            </Row>
+        </Container>
+
     );
 }
 
