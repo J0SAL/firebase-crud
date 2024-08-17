@@ -1,43 +1,39 @@
-import { useState } from 'react';
-import { Card, Button } from 'react-bootstrap';
-import Skeleton from 'react-loading-skeleton';
+import { faDownLong } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Card } from 'react-bootstrap';
 
 function MovieCard({ movie }) {
-    const [loading, setLoading] = useState(false);
-    const handleImageLoad = () => {
-        setLoading(false);
-    };
 
     return (
         <Card className="shadow-sm">
-            {loading ? (
-                <Skeleton height={200} />
-            ) : (
-                <Card.Img
-                    variant="top"
-                    src={movie.image_url}
-                    onLoad={handleImageLoad}
-                    style={{ display: loading ? 'none' : 'block', objectFit: "fill", height: '40vh' }}
-                />
-            )}
+
+            <Card.Img
+                variant="top"
+                src={movie.image_url}
+                style={{ display: 'block', objectFit: "fill", height: '40vh' }}
+            />
+
             <Card.Body>
-                {loading ? (
-                    <>
-                        <Skeleton width={100} count={2} />
-                    </>
-                ) : (
-                    <>
-                        <Card.Title>{movie.name}</Card.Title>
-                        <Button
-                            variant="primary"
-                            href={movie.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            Watch/Download
-                        </Button>
-                    </>
-                )}
+                <Card.Title>{movie.name}</Card.Title>
+                <a
+                    href={movie.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        fontSize: '16px',
+                        color: '#007bff',
+                        textDecoration: 'none',
+                        fontWeight: 'bold',
+                    }}
+                >
+                    Watch/Download
+                    <FontAwesomeIcon
+                        icon={faDownLong}
+                        style={{ margin: "5px 0 0 5px" }}
+                    />
+                </a>
             </Card.Body>
         </Card>
     );
