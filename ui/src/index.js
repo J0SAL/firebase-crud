@@ -6,14 +6,17 @@ import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import PageNavbar from "./components/common/PageNavbar";
+import { MovieProvider } from "./context/MovieContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <PageNavbar />
-        <App />
+        <MovieProvider>
+          <PageNavbar />
+          <App />
+        </MovieProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

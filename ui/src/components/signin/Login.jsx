@@ -34,7 +34,7 @@ function Login() {
         setUser({ ...user, [e.target.name]: e.target.value });
     };
 
-    const { login, logout } = useAuth();
+    const { login } = useAuth();
 
     const signIn = async (e) => {
         e.preventDefault();
@@ -48,12 +48,11 @@ function Login() {
             );
             const email = result.user.email;
             const firebaseIdToken = await result.user.getIdToken();
-            console.log(email);
-            console.log(firebaseIdToken);
             login(firebaseIdToken);
         } catch (error) {
             if (error.code === 'auth/invalid-credential')
                 toast.warn('Opps, Wrong Creds!')
+            toast.error('Opps, Something wrong with Auth!')
             console.log(error);
         } finally {
             setLoading(false);
@@ -65,10 +64,9 @@ function Login() {
             let result = await signInWithPopup(auth, provider);
             const email = result.user.email;
             const idToken = await result.user.getIdToken();
-            console.log(email);
-            console.log(idToken);
             login(idToken);
         } catch (error) {
+            toast.error('Opps, Something wrong with Auth!')
             console.log(error);
         }
     };

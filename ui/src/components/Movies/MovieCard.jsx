@@ -1,24 +1,23 @@
 import { useState } from 'react';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import Skeleton from 'react-loading-skeleton';
 
 function MovieCard({ movie }) {
-    const [loading, setLoading] = useState(true);
-
+    const [loading, setLoading] = useState(false);
     const handleImageLoad = () => {
         setLoading(false);
     };
 
     return (
-        <Card className="h-100 shadow-sm">
+        <Card className="shadow-sm">
             {loading ? (
                 <Skeleton height={200} />
             ) : (
                 <Card.Img
                     variant="top"
-                    src={movie.image}
+                    src={movie.image_url}
                     onLoad={handleImageLoad}
-                    style={{ display: loading ? 'none' : 'block' }}
+                    style={{ display: loading ? 'none' : 'block', objectFit: "fill", height: '40vh' }}
                 />
             )}
             <Card.Body>
@@ -31,11 +30,11 @@ function MovieCard({ movie }) {
                         <Card.Title>{movie.name}</Card.Title>
                         <Button
                             variant="primary"
-                            href={movie.link}
+                            href={movie.url}
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            View More
+                            Watch/Download
                         </Button>
                     </>
                 )}

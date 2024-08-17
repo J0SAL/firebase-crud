@@ -1,12 +1,24 @@
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { useState } from 'react';
+import { useMovie } from '../../context/MovieContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 function AddMovie() {
+    const { addMovie } = useMovie();
     const [movie, setMovie] = useState({
         name: '',
         image: '',
         link: ''
     });
+
+    const [loading, setLoading] = useState(false);
+
+    const canSubmit =
+        movie.name.length > 0 &&
+        movie.image.length > 0 &&
+        movie.link.length > 0 &&
+        !loading;
 
     const handleChange = (e) => {
         setMovie({
@@ -19,6 +31,17 @@ function AddMovie() {
         e.preventDefault();
         // Handle form submission logic here
         console.log("Movie Details:", movie);
+        try {
+            setLoading(true)
+            addMovie({
+                name: movie.name,
+                image_url: movie.image,
+                url: movie.link
+            })
+        } finally {
+            setLoading(false)
+        }
+
     };
 
     return (
@@ -59,8 +82,8 @@ function AddMovie() {
                                 placeholder="Enter movie link"
                             />
                         </Form.Group>
-                        <Button type="submit" variant="primary" className="w-100">
-                            Add Movie
+                        <Button disabled={!canSubmit} type="submit" variant="primary" className="w-100">
+                            {!loading ? "Add Movie" : <FontAwesomeIcon icon={faSpinner} className="fa-spin" />}
                         </Button>
                     </Form>
                 </Col>
