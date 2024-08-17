@@ -22,7 +22,7 @@ function PageNavbar() {
         { title: "Protected Path", path: "#" },
     ];
     return (
-        <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
             <Container>
                 <Nav.Link as={Link} to="/">
                     <Navbar.Brand>

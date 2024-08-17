@@ -86,6 +86,7 @@ function Register() {
               type="email"
               placeholder="example@company.com"
               onChange={handleChange}
+              value={user.email}
             />
           </InputGroup>
         </Form.Group>
@@ -103,6 +104,7 @@ function Register() {
               type="password"
               placeholder="Password"
               onChange={handleChange}
+              value={user.password}
             />
           </InputGroup>
         </Form.Group>

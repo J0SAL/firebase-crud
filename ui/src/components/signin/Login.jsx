@@ -92,6 +92,7 @@ function Login() {
                             type="email"
                             placeholder="example@company.com"
                             onChange={handleChange}
+                            value={user.email}
                         />
                     </InputGroup>
                 </Form.Group>
@@ -109,6 +110,7 @@ function Login() {
                             type="password"
                             placeholder="Password"
                             onChange={handleChange}
+                            value={user.passwor}
                         />
                     </InputGroup>
                 </Form.Group>

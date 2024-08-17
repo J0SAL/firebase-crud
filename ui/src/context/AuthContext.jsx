@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { auth } from "../utils/firebase";
 import { BASE_URL } from "../utils/base_url";
 import axiosClient from "../utils/axios-client";
-import { getJwtToken, setJwtToken } from "../utils/tokenstorage";
+import { getJwtToken, removeJwtToken, addJwtToken } from "../utils/tokenstorage";
 
 const AuthContext = createContext();
 
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }) => {
                 },
             });
             setJwtToken(res.data.token);
-            setJwtToken(res.data.token)
+            addJwtToken(res.data.token)
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -81,8 +81,7 @@ export const AuthProvider = ({ children }) => {
                 },
             });
             setJwtToken(res.data.token);
-            localStorage.setItem("jwttoken", res.data.token);
-            setJwtToken(res.data.token);
+            addJwtToken(res.data.token);
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -95,7 +94,7 @@ export const AuthProvider = ({ children }) => {
     const removeData = async () => {
         await signOut(auth);
         setUser(null);
-        localStorage.removeItem("jwttoken");
+        removeJwtToken();
     }
     const logout = async () => {
         try {
