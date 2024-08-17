@@ -16,6 +16,7 @@ db = firestore.client()
 
 # Schemas
 users_ref = db.collection('users')
+movies_ref = db.collection('movies')
 
 
 @app.route('/register', methods=['POST'])
@@ -72,6 +73,33 @@ def add_user(user):
     except Exception as e:
         print(f"error {str(e)}")
         return {"error": str(e)}, 500
+
+@app.route('/add-movie', methods=['POST'])
+@verify_jwt_token
+def add_movie(user):
+    try:
+        email = user['email']
+        jsondata = request.json
+        newmovie = movies_ref.add({
+            'name': jsondata['name'],
+            'url': jsondata['url'],
+            'uploaded_by': email,
+            'image_url': jsondata['image_url'],
+        })
+        return {"movie": newmovie[1].get().to_dict()}, 200
+    except Exception as e:
+        print(f"error {str(e)}")
+        return {"error": str(e)}, 500
+
+@app.route('/get-all-movies', methods=['GET'])
+def get_all_movies():
+    try:
+        all_movies = [doc.to_dict() for doc in movies_ref.stream()]
+        return {"movies": all_movies}, 200
+    except Exception as e:
+        print(f"error {str(e)}")
+        return {"error": str(e)}, 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
