@@ -108,7 +108,7 @@ function Login() {
                             type="password"
                             placeholder="Password"
                             onChange={handleChange}
-                            value={user.passwor}
+                            value={user.password}
                         />
                     </InputGroup>
                 </Form.Group>
