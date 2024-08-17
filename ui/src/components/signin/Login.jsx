@@ -122,19 +122,15 @@ function Login() {
                             className="w-100"
                             disabled={!canSubmit}
                         >
-                            Login
+                            {!loading ? "Login" : <FontAwesomeIcon icon={faSpinner} className="fa-spin" />}
                         </Button>
                     </Col>
                     <Col xs={12} className="mt-2">
-                        <button className="login-with-google-btn w-100" onClick={signInGoogle}>
+                        <button disabled={loading} className="login-with-google-btn w-100" onClick={signInGoogle}>
                             Continue With Google
                         </button>
                     </Col>
-                    {loading && (
-                        <Col xs={1}>
-                            <FontAwesomeIcon icon={faSpinner} className="fa-spin" />
-                        </Col>
-                    )}
+
 
                 </Row>
             </Form>
