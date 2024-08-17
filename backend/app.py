@@ -80,10 +80,12 @@ def add_movie(user):
     try:
         email = user['email']
         jsondata = request.json
+        userdata = users_ref.where('email', '==', user['email']).get()
+        user = userdata[0].to_dict()
         newmovie = movies_ref.add({
             'name': jsondata['name'],
             'url': jsondata['url'],
-            'uploaded_by': email,
+            'uploaded_by': user['name'],
             'image_url': jsondata['image_url'],
         })
         return {"movie": newmovie[1].get().to_dict()}, 200
