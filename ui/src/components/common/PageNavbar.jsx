@@ -19,7 +19,7 @@ function PageNavbar() {
 
     const { user, logout } = useAuth();
     const navLinks = [
-        { title: "Protected Path", path: "#" },
+        { title: "Add Movie", path: "/add-movie" },
     ];
     return (
         <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
