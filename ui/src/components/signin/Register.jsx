@@ -15,6 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 var default_user = {
   email: "",
@@ -50,7 +51,8 @@ function Register() {
       register(firebaseIdToken);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
-        console.log('This email address is already in use. Please use a different email.');
+        console.log();
+        toast.warn('Opps, Email already in use.. Maybe try login? 🤔')
       } else {
         console.log('An error occurred:', error.message);
       }

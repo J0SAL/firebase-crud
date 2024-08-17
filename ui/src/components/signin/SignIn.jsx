@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Login from './Login';
 import Register from './Register';
 import './signin.css';
+import { PAGE_TITLE } from "../../utils/constants";
 
 function SignIn() {
     return (
@@ -21,7 +22,7 @@ function SignIn() {
                                 <div className="d-flex align-items-center justify-content-center my-2">
                                     <img width={35} src="/logo192.png"
                                         className={`d-inline-block align-top infinite-rotate`} />
-                                    <h4 className="mx-2">Joy</h4>
+                                    <h4 className="mx-2">{PAGE_TITLE}</h4>
                                 </div>
                                 <Tabs
                                     defaultActiveKey="login"

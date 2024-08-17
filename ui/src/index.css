@@ -12,6 +12,11 @@ code {
     monospace;
 }
 
+/* custom css */
+#dropdown-basic::after {
+  display: none;
+}
+
 
 .infinite-rotate{
   animation: rotation 3s infinite linear;

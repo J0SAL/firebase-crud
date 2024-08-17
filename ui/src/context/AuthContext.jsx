@@ -6,17 +6,19 @@ import { toast } from "react-toastify";
 import { auth } from "../utils/firebase";
 import { BASE_URL } from "../utils/base_url";
 import axiosClient from "../utils/axios-client";
+import { getJwtToken, setJwtToken } from "../utils/tokenstorage";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
-    const [jwtToken, setJwtToken] = useState(localStorage.getItem('jwttoken'));
+    const [jwtToken, setJwtToken] = useState(getJwtToken());
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (jwtToken)
+        if (jwtToken) {
             getUser(jwtToken);
+        }
     }, [jwtToken])
 
     const getUser = async (token) => {
@@ -34,8 +36,9 @@ export const AuthProvider = ({ children }) => {
             if (error.response.data.status == 'jwt_expired') {
                 toast.info("Session Expired, Please Log in again 😊")
                 removeData()
-                navigate('/login')
+                navigate('/signin')
             }
+            toast.error("Something went wrong")
             console.log(error);
         }
     }
@@ -60,7 +63,7 @@ export const AuthProvider = ({ children }) => {
                 },
             });
             setJwtToken(res.data.token);
-            localStorage.setItem("jwttoken", res.data.token);
+            setJwtToken(res.data.token)
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",
@@ -79,6 +82,7 @@ export const AuthProvider = ({ children }) => {
             });
             setJwtToken(res.data.token);
             localStorage.setItem("jwttoken", res.data.token);
+            setJwtToken(res.data.token);
         } catch (error) {
             toast.error("Something went wrong!☹️", {
                 position: "top-right",

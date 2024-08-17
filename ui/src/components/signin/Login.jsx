@@ -15,6 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "react-toastify";
 
 var default_user = {
     email: "",
@@ -51,6 +52,8 @@ function Login() {
             console.log(firebaseIdToken);
             login(firebaseIdToken);
         } catch (error) {
+            if (error.code === 'auth/invalid-credential')
+                toast.warn('Opps, Wrong Creds!')
             console.log(error);
         } finally {
             setLoading(false);
