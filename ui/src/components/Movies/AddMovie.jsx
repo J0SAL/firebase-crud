@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { useMovie } from '../../context/MovieContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import ImageUploader from './ImageUploader';
 
 function AddMovie() {
     const { addMovie } = useMovie();
+    const [url, setUrl] = useState('');
     const [movie, setMovie] = useState({
         name: '',
-        image: '',
+        // image: '',
         link: ''
     });
 
@@ -16,7 +18,7 @@ function AddMovie() {
 
     const canSubmit =
         movie.name.length > 0 &&
-        movie.image.length > 0 &&
+        url.length > 0 &&
         movie.link.length > 0 &&
         !loading;
 
@@ -29,13 +31,11 @@ function AddMovie() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle form submission logic here
-        console.log("Movie Details:", movie);
         try {
             setLoading(true)
             addMovie({
                 name: movie.name,
-                image_url: movie.image,
+                image_url: url,
                 url: movie.link
             })
         } finally {
@@ -62,7 +62,7 @@ function AddMovie() {
                                 placeholder="Enter movie name"
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3">
+                        {/* <Form.Group className="mb-3">
                             <Form.Label>Movie Image URL</Form.Label>
                             <Form.Control
                                 type="text"
@@ -71,7 +71,8 @@ function AddMovie() {
                                 onChange={handleChange}
                                 placeholder="Enter movie image URL"
                             />
-                        </Form.Group>
+                        </Form.Group> */}
+                        <ImageUploader url={url} setUrl={setUrl} />
                         <Form.Group className="mb-3">
                             <Form.Label>Movie Link</Form.Label>
                             <Form.Control
